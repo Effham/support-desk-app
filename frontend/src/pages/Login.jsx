@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, reset } from "../features/auth/authSlice";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -55,12 +56,9 @@ const Login = () => {
   };
 
   if (isLoading) {
-    return (
-      <>
-        <h1>Loading</h1>
-      </>
-    );
+    return <Spinner />;
   }
+
   return (
     <>
       <section className="heading">
