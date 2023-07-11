@@ -9,7 +9,6 @@ const Tickets = () => {
   const { tickets, isLoading, isSuccess } = useSelector(
     (state) => state.tickets
   );
-  const { user } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 

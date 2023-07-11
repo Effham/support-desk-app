@@ -45,6 +45,40 @@ export const getTickets = createAsyncThunk(
   }
 );
 
+export const getTicket = createAsyncThunk(
+  "tickets/get",
+  async (ticketId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await ticketService.getTicket(ticketId, token);
+      return response;
+    } catch (err) {
+      const message =
+        (err.response && err.response.data && err.response.data.message) ||
+        err.message ||
+        err.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const closeTicket = createAsyncThunk(
+  "tickets/close",
+  async (ticketId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      const response = await ticketService.closeTicket(ticketId, token);
+      return response;
+    } catch (err) {
+      const message =
+        (err.response && err.response.data && err.response.data.message) ||
+        err.message ||
+        err.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const ticketSlice = createSlice({
   name: "ticket",
   initialState,
@@ -77,6 +111,26 @@ export const ticketSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      })
+      .addCase(getTicket.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getTicket.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.ticket = action.payload;
+      })
+      .addCase(getTicket.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(closeTicket.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.tickets.map((ticket) =>
+          ticket._id === action.payload.id ? (ticket.status = "closed") : ticket
+        );
       });
   },
 });
